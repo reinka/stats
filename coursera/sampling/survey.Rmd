@@ -1,0 +1,74 @@
+---
+title: "sampling"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r, echo=FALSE}
+myxbar <- rep(NA, 1000)
+for(i in 1:1000) {
+  mysample <- sample(df$age,size = 150)
+  myxbar[i] <- mean(mysample)
+}
+hist(myxbar, binwidth=1)
+mean(myxbar);mean(df$age)
+sd(myxbar);sd(df$age)/sqrt(150)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+summary(df$austin)
+sd(df$austin)
+hist(df$austin)
+box <- rep(NA, 1000)
+for(i in 1:1000){
+  samp <- sample(df$austin, size = 10)
+  box[i] <- mean(samp)
+}
+hist(box)
+mean(box);sd(box)
+```
+
+
+```{r}
+d <- df$name_letters
+hist(d)
+mean(d);sd(d)
+
+box5n = rep(NA,1000)
+box15n = rep(NA,1000)
+box25nL = rep(NA,1000)
+for(i in 1:1000){
+  samp5 <- sample(d,size = 5)
+  samp15 <- sample(d,size = 15)
+  samp25 <- sample(d, size = 25)
+  box5n[i] <- mean(samp5)
+  box15n[i] <- mean(samp15)
+  box25nL[i] <- mean(samp25)
+}
+summary(d)
+mean(box5n);sd(box5n)
+mean(box15n);sd(box15n)
+mean(box25n);sd(box25n)
+hist(box5n)
+hist(box15n)
+hist(box25nL)
+```
+##1b) How many of the first 10 students in the dataset had names longer than 5 letters?
+```{r}
+length(first_10[first_10$name_letters >5, "name_letters"])
+
+```
+##1c) How long is the name of the first student in the dataset who is happy less than 40% of the time?
+```{r}
+happy_less_than_40 <- df[df$happy < 40, ]
+happy_less_than_40[1,"name_letters"]
+```
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
