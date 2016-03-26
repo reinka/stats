@@ -121,19 +121,26 @@ ggplot(df.melted, aes(x=Year, y = value, color = factor(variable)))+
   scale_y_continuous(breaks=seq(0,40000,2500)) +
   scale_colour_discrete(name = "Country")
 
-ggsave("GDP Multiple Countries in 1 plot.png")
+ggsave("GDP Multiple Countries in 1 plot - scatter plot.png")
 ```
 ```{r}
 df2 <- data.frame(Year = gdp$Year, Country = c(gdp$Germany, gdp$`United States`, gdp$China, gdp$Russia))
 df.melted <- melt(df,id="Year")
 
-ggplot(df, aes(x=factor(Year), y = c(Germany, USA, Russia, China))) + 
-  geom_line(aes(linetype=Year)) +
-  geom_point(shape = 1) +
+ggplot(df, aes(x=Year, y = value, color = Country)) + 
+  geom_line(aes(y=Germany, col="Germany"), group=1) +
+  geom_point(aes(y=Germany, col="Germany")) +
+  geom_line(aes(y=USA, col="USA"), group=2) +
+  geom_point(aes(y=USA, col="USA")) +
+  geom_line(aes(y=China, col="China"), group=3) +
+  geom_point(aes(y=China, col="China")) +
+  geom_line(aes(y=Russia, col="Russia"), group=4) +
+  geom_point(aes(y=Russia, col="Russia")) +
   ylab("GDP") +
   scale_y_continuous(breaks=seq(0,40000,2500)) +
-  scale_colour_discrete(name = "Country")
+  scale_colour_discrete(name = "Country") + 
+  ggtitle("GDP of the countries China, Germany, Russia and USA\nfrom 1960 until 2011")
 
-ggsave("GDP Multiple Countries in 1 plot.png")
+ggsave("GDP Multiple Countries in 1 plot - line plot.png")
 ```
 
