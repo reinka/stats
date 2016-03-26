@@ -1,0 +1,66 @@
+---
+title: "sleepdata"
+output: html_document
+---
+
+
+```{r}
+shitload <- sleep$Schlafanmerkungen
+
+tst <- rep(NA, 69)
+
+count = 1
+for (i in shitload){
+  if ( i == ""){
+    sleep$parsed_shit[count] <- NA
+    tst[count] <- NA
+  }
+  else{
+  sleep$parsed_shit[count] <- strsplit(i, ":")
+  tst[count] <- strsplit(i, ":")
+  }
+  count = count + 1
+}
+```
+##Now we have all Schlafanmerkungen for each day as a single list, collected in tst. We're going to extract Mood Average and Stress out of that list now.
+```{r}
+step = 1
+for (list in sleep$parsed_shit){
+    
+  if(length(tst)==0){
+    sleep$`Mood Average`[step] <- NA
+    sleep$Stress[step] <- NA
+  }
+  else{
+    #if (index)
+    index_mood <- grep("Mood Average", list)
+    index_stress <- grep("Stress", list)
+    sleep$`Mood Average`[step] <- tst[[c(step,index_mood)]]
+    sleep$Stress[step] <- tst[[c(step,index_stress)]]
+  }
+  step = step + 1
+}
+
+```
+##Now we need to extract the values of Mood Average and Stress. Since it's the last Character in that string, this should be fairly easy using substr(). We're also going to coerce those values to class numeric
+```{r}
+sleep$`Mood Average Values` <- as.numeric(substr(sleep$`Mood Average`,14,14))
+sleep$`Stress Values` <- as.numeric(substr(sleep$Stress,8,8))
+
+```
+
+##Now let's create some plots
+```{r}
+p1<-ggplot(aes(x=`Mood Average Values`), data=sleep) + 
+  geom_histogram(fill="#09dd99", colour="black") +
+  scale_x_continuous(breaks=seq(1,10,1)) + 
+  scale_y_continuous(breaks=seq(1,30,2.5)) +
+  ylab("Number of occurences")
+
+p2 <- ggplot(aes(y=`Mood Average Values`, x=`Stress Values`), data=sleep) + 
+  geom_point(shape=1)
+
+grid.arrange(p1,p2, ncol=1)
+
+```
+

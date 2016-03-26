@@ -1,0 +1,113 @@
+---
+title: "Life expectancy"
+output: html_document
+---
+```{r}
+setwd("data-analysis/")
+library(ggplot2)
+library(gridExtra)
+library(grid)
+library(dplyr); library(tidyr)
+life_expectancy <- read.csv("life_expectancy.csv")
+gdp <- read.csv("gdp_per_capita.csv")
+life_expectancy <- tbl_df(life_expectancy)
+gdp <- tbl_df(gdp)
+```
+
+##Transposing life_expectancy table
+```{r}
+life_expectancy <- life_expectancy %>% gather("Year", "Life expectancy", -1) %>% spread("Country", "Life expectancy") 
+head(life_expectancy)
+```
+
+##Removing "X" in front of years
+```{r}
+years <- life_expectancy$Year
+count = 1
+
+for (year in years){
+  life_expectancy$Year[count] <- substr(year, 2,5)
+  count = count + 1
+}
+```
+
+##Transposing gdp table
+```{r}
+gdp <- gdp %>% gather("Year", "GDP", -1) %>% spread("Country", "GDP") 
+head(gdp)
+```
+
+##Removing "X" in front of years
+```{r}
+rm(years, count, year)
+years <- gdp$Year
+count = 1
+
+for (year in years){
+  gdp$Year[count] <- substr(year, 2,5)
+  count = count + 1
+}
+```
+
+##Plot of life expectancy in Germany over the last 50 years
+```{r}
+p1 <- ggplot(aes(y=Germany, x = Year, group = 1), data = subset(life_expectancy, life_expectancy$Year > "1945")) + 
+  geom_point(stat = "summary", fun.y = max, colour="#099dd9",size=2) + stat_summary(fun.y = max, geom="line") +geom_smooth(color="#9dd999") + xlab("Life expectancy in years") + ggtitle("Life expectancy in Germany from 1946 - 2013") 
+
+p1
+```
+##Life expectancy in the US
+```{r}
+p2 <- ggplot(aes(y=`United States`, x = Year, group = 1), data = subset(life_expectancy, life_expectancy$Year > "1945")) + 
+  geom_point(stat = "summary", fun.y = max, colour="#f79420",size=2) + stat_summary(fun.y = max, geom="line") +geom_smooth(color="#9dd999") + xlab("Life expectancy in years") + ggtitle("Life expectancy in the US from 1946 - 2013") 
+
+```
+##China
+```{r}
+p3 <- ggplot(aes(y=`China`, x = Year, group = 1), data = subset(life_expectancy, life_expectancy$Year > "1945")) + 
+  geom_point(stat = "summary", fun.y = max, colour="red",size=2) + stat_summary(fun.y = max, geom="line") +geom_smooth(color="#9dd999") + xlab("Life expectancy in years") + ggtitle("Life expectancy in China from 1946 - 2013") 
+
+grid.arrange(p1,p2,p3, ncol=1)
+```
+##Madagascar
+```{r}
+
+p4 <- ggplot(aes(y=Madagascar, x = Year, group = 1), data = subset(life_expectancy, life_expectancy$Year > "1945")) + 
+  geom_point(stat = "summary", fun.y = max, colour="#099dd9",size=2) + stat_summary(fun.y = max, geom="line") +geom_smooth(color="#9dd999") + xlab("Life expectancy in years") + ggtitle("Life expectancy in Madagascar from 1946 - 2013") 
+
+grid.arrange(p1,p2,p3,p4, ncol=1)
+```
+##Somalia
+```{r}
+p5 <- ggplot(aes(y=Somalia, x = Year, group = 1), data = subset(life_expectancy, life_expectancy$Year > "1945")) + 
+  geom_point(colour="#099dd9",size=2) + geom_line() + +geom_smooth(color="#9dd999") + xlab("Life expectancy in years") + ggtitle("Life expectancy in Somalia from 1946 - 2013") 
+
+grid.arrange(p1,p5, p2,p3,p4, ncol=1)
+```
+
+```{r}
+
+g1 <- ggplot(aes(x=Year, y = Germany, group = 1), data=gdp) + geom_line() + geom_point() + geom_smooth()
+
+g2 <- ggplot(aes(x=Year, y = `United States`, group = 1), data=gdp) + geom_line() + geom_point() + geom_smooth()
+
+g3 <- ggplot(aes(x=Year, y = China, group = 1), data=gdp) + geom_line() + geom_point() + geom_smooth()
+
+g4 <- ggplot(data=gdp, aes(x=Year), group=1) + geom_point(aes(y=Germany), colour="#09dd99") +
+  geom_line(aes(y=Germany), group = 1, colour='yellow')  
+g4 <- g4 + geom_point(aes(y=`United States`),colour="green", group=2) + geom_line(aes(y=`United States`, colour ="blue"), group=2) 
+g4 <- g4 + geom_point(aes(y=China),colour="red", group=3) + geom_line(aes(y=China), colour="red", group=3)
+
+g4 <- g4 + scale_colour_manual(name = "Country", 
+                             values=c("yellow", "green", "red"),
+                             labels=c("Germany", "USA", "China"))
+
+grid.arrange(g1,g2,g3,g4,ncol=1)
+
+```
+```{r}
+ggplot(df[,"United States"])
+
+```
+
+
