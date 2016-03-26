@@ -124,8 +124,7 @@ ggplot(df.melted, aes(x=Year, y = value, color = factor(variable)))+
 ggsave("GDP Multiple Countries in 1 plot - scatter plot.png")
 ```
 ```{r}
-df2 <- data.frame(Year = gdp$Year, Country = c(gdp$Germany, gdp$`United States`, gdp$China, gdp$Russia))
-df.melted <- melt(df,id="Year")
+df <- data.frame(Year = gdp$Year, Germany = gdp$Germany, USA = gdp$`United States`, China = gdp$China, Russia = gdp$Russia)
 
 ggplot(df, aes(x=Year, y = value, color = Country)) + 
   geom_line(aes(y=Germany, col="Germany"), group=1) +
