@@ -83,31 +83,57 @@ p5 <- ggplot(aes(y=Somalia, x = Year, group = 1), data = subset(life_expectancy,
   geom_point(colour="#099dd9",size=2) + geom_line() + +geom_smooth(color="#9dd999") + xlab("Life expectancy in years") + ggtitle("Life expectancy in Somalia from 1946 - 2013") 
 
 grid.arrange(p1,p5, p2,p3,p4, ncol=1)
+ggsave(filename = "Life expectancy of various countries.png")
 ```
 
 ```{r}
 
-g1 <- ggplot(aes(x=Year, y = Germany, group = 1), data=gdp) + geom_line() + geom_point() + geom_smooth()
+g1 <- ggplot(aes(x=Year, y = Germany, group = 1), data=subset(gdp, !is.na(Germany))) + geom_line() + geom_point() + geom_smooth() + ylab("GDP") + ggtitle("GDP Germany 1970 - 2011")
 
-g2 <- ggplot(aes(x=Year, y = `United States`, group = 1), data=gdp) + geom_line() + geom_point() + geom_smooth()
+g2 <- ggplot(aes(x=Year, y = `United States`, group = 1), data=subset(gdp, !is.na(`United States`))) + geom_line() + geom_point() + geom_smooth() + ylab("GDP") + ggtitle("GDP USA 1960 - 2011")
 
-g3 <- ggplot(aes(x=Year, y = China, group = 1), data=gdp) + geom_line() + geom_point() + geom_smooth()
+g3 <- ggplot(aes(x=Year, y = China, group = 1), data=subset(gdp, !is.na(China))) + geom_line() + geom_point() + geom_smooth() + ylab("GDP") + ggtitle("GDP China 1960 - 2011")
 
-g4 <- ggplot(data=gdp, aes(x=Year), group=1) + geom_point(aes(y=Germany), colour="#09dd99") +
-  geom_line(aes(y=Germany), group = 1, colour='yellow')  
-g4 <- g4 + geom_point(aes(y=`United States`),colour="green", group=2) + geom_line(aes(y=`United States`, colour ="blue"), group=2) 
-g4 <- g4 + geom_point(aes(y=China),colour="red", group=3) + geom_line(aes(y=China), colour="red", group=3)
+g4 <- ggplot(data=gdp, aes(x=Year), group=1) + geom_point(aes(y=Germany), colour="#099dd9", group=1, shape=1) +
+  geom_line(aes(y=Germany), group = 1, colour='#f79420') + ylab("GDP")
 
-g4 <- g4 + scale_colour_manual(name = "Country", 
-                             values=c("yellow", "green", "red"),
-                             labels=c("Germany", "USA", "China"))
+g4 <- g4 + geom_point(aes(y=`United States`), group=2, shape=2) +
+  geom_line(aes(y=`United States`), group = 2, colour='green') + ylab("GDP")  
+
+g4 <- g4 + geom_point(aes(y=China), colour="red", group=3, shape=4) +
+  geom_line(aes(y=China), group = 3, colour='black') + ylab("GDP") 
+
+
 
 grid.arrange(g1,g2,g3,g4,ncol=1)
 
+ggsave("GDP Germany, USA, China line chart.png")
+
+```
+##Multiple plots in one + legend
+```{r}
+df <- data.frame(Year = gdp$Year, Germany = gdp$Germany, USA = gdp$`United States`, China = gdp$China, Russia = gdp$Russia)
+df.melted <- melt(df,id="Year")
+
+ggplot(df.melted, aes(x=Year, y = value, color = factor(variable)))+
+  geom_point(shape = 1) +
+  ylab("GDP") +
+  scale_y_continuous(breaks=seq(0,40000,2500)) +
+  scale_colour_discrete(name = "Country")
+
+ggsave("GDP Multiple Countries in 1 plot.png")
 ```
 ```{r}
-ggplot(df[,"United States"])
+df2 <- data.frame(Year = gdp$Year, Country = c(gdp$Germany, gdp$`United States`, gdp$China, gdp$Russia))
+df.melted <- melt(df,id="Year")
 
+ggplot(df, aes(x=factor(Year), y = c(Germany, USA, Russia, China))) + 
+  geom_line(aes(linetype=Year)) +
+  geom_point(shape = 1) +
+  ylab("GDP") +
+  scale_y_continuous(breaks=seq(0,40000,2500)) +
+  scale_colour_discrete(name = "Country")
+
+ggsave("GDP Multiple Countries in 1 plot.png")
 ```
-
 
