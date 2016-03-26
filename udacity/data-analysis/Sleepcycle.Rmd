@@ -58,7 +58,7 @@ p1<-ggplot(aes(x=`Mood Average Values`), data=sleep) +
   ylab("Number of occurences")
 
 p2 <- ggplot(aes(y=`Mood Average Values`, x=`Stress Values`), data=sleep) + 
-  geom_point(shape=1)
+  geom_point(shape=1) + geom_smooth()
 
 grid.arrange(p1,p2, ncol=1)
 
