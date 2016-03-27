@@ -1,0 +1,24 @@
+---
+title: "Diamonds"
+output: html_document
+---
+```{r}
+
+test <- df %>% 
+  group_by(carat) %>% 
+  group_by(cut,add = TRUE) %>% 
+  summarise(`Mean Price` = mean(price), `Median Price` =median(price), 
+            n = n()) %>% 
+  arrange(carat)
+```
+
+```{r}
+ggplot(aes(y=`Median Price`,x=carat,colour=cut),data = test ) + geom_line() + coord_trans(y="log10")
+ggsave("median price per cut and carat - noisy plot.png")
+```
+```{r}
+ ggplot(aes(y=`Median Price`,x=round(carat/2,digits = 1)*2,colour=cut),data = test ) + geom_line(stat = "summary", fun.y=mean) +geom_jitter(stat="summary", fun.y=mean, position = position_jitter(h=0),alpha=1/2) + coord_trans(y="log10") + xlab("Carat") + scale_color_discrete(name="Cut") + ggtitle("Median price per carat and cut")
+
+ggsave("median price per cut and carat - less noise.png")
+```
+
