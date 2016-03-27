@@ -21,4 +21,3 @@ ggsave("median price per cut and carat - noisy plot.png")
 
 ggsave("median price per cut and carat - less noise.png")
 ```
-
